@@ -66,7 +66,7 @@ angular.module('ui.bootstrap.timepicker', [])
   // Get $scope.hours in 24H mode if valid
   function getHoursFromTemplate ( ) {
     var hours = parseInt( $scope.hours, 10 );
-    var valid = ( $scope.showMeridian ) ? (hours > 0 && hours < 13) : (hours >= 0 && hours < 24);
+    var valid = !isNaN($scope.hours * 1) && ($scope.showMeridian ? (hours > 0 && hours < 13) : (hours >= 0 && hours < 24));
     if ( !valid ) {
       return undefined;
     }
@@ -84,7 +84,7 @@ angular.module('ui.bootstrap.timepicker', [])
 
   function getMinutesFromTemplate() {
     var minutes = parseInt($scope.minutes, 10);
-    return ( minutes >= 0 && minutes < 60 ) ? minutes : undefined;
+    return !isNaN($scope.minutes * 1) && ( minutes >= 0 && minutes < 60 ) ? minutes : undefined;
   }
 
   function pad( value ) {
@@ -169,7 +169,6 @@ angular.module('ui.bootstrap.timepicker', [])
         });
       }
     });
-
   };
 
   this.render = function() {
@@ -201,14 +200,17 @@ angular.module('ui.bootstrap.timepicker', [])
   }
 
   function updateTemplate( keyboardChange ) {
-    var hours = selected.getHours(), minutes = selected.getMinutes();
+    //We only need to manually update the hours/minutes model when changes occur through the mousewheel
+    if (!keyboardChange) {
+      var hours = selected.getHours(), minutes = selected.getMinutes();
 
-    if ( $scope.showMeridian ) {
-      hours = ( hours === 0 || hours === 12 ) ? 12 : hours % 12; // Convert 24 to 12 hour system
+      if ( $scope.showMeridian ) {
+        hours = ( hours === 0 || hours === 12 ) ? 12 : hours % 12; // Convert 24 to 12 hour system
+      }
+      $scope.hours = pad(hours);
+      $scope.minutes = pad(minutes);
     }
 
-    $scope.hours = keyboardChange === 'h' ? hours : pad(hours);
-    $scope.minutes = keyboardChange === 'm' ? minutes : pad(minutes);
     $scope.meridian = selected.getHours() < 12 ? meridians[0] : meridians[1];
   }
 

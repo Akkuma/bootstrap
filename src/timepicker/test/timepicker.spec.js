@@ -755,10 +755,74 @@ describe('timepicker directive', function () {
       expect(element.hasClass('ng-invalid-time')).toBe(false);
     });
 
+    it('clears model when input hours starts with an invalid character & alerts the UI', function() {
+      var el = getHoursInputEl();
+
+      changeInputValueTo(el, '!5');
+      expect($rootScope.time).toBe(null);
+      expect(el.parent().hasClass('has-error')).toBe(true);
+      expect(element.hasClass('ng-invalid-time')).toBe(true);
+
+      changeInputValueTo(el, 8);
+      el.blur();
+      $rootScope.$digest();
+      expect(getTimeState()).toEqual(['08', '40', 'PM']);
+      expect(getModelState()).toEqual([20, 40]);
+      expect(el.parent().hasClass('has-error')).toBe(false);
+      expect(element.hasClass('ng-invalid-time')).toBe(false);
+    });
+
+    it('clears model when input hours ends with an invalid character & alerts the UI', function() {
+      var el = getHoursInputEl();
+
+      changeInputValueTo(el, '5!');
+      expect($rootScope.time).toBe(null);
+      expect(el.parent().hasClass('has-error')).toBe(true);
+      expect(element.hasClass('ng-invalid-time')).toBe(true);
+
+      changeInputValueTo(el, 8);
+      el.blur();
+      $rootScope.$digest();
+      expect(getTimeState()).toEqual(['08', '40', 'PM']);
+      expect(getModelState()).toEqual([20, 40]);
+      expect(el.parent().hasClass('has-error')).toBe(false);
+      expect(element.hasClass('ng-invalid-time')).toBe(false);
+    });
+
     it('clears model when input minutes is invalid & alerts the UI', function() {
       var el = getMinutesInputEl();
 
       changeInputValueTo(el, 'pizza');
+      expect($rootScope.time).toBe(null);
+      expect(el.parent().hasClass('has-error')).toBe(true);
+      expect(element.hasClass('ng-invalid-time')).toBe(true);
+
+      changeInputValueTo(el, 22);
+      expect(getTimeState()).toEqual(['02', '22', 'PM']);
+      expect(getModelState()).toEqual([14, 22]);
+      expect(el.parent().hasClass('has-error')).toBe(false);
+      expect(element.hasClass('ng-invalid-time')).toBe(false);
+    });
+
+    it('clears model when input minutes starts with an invalid & alerts the UI', function() {
+      var el = getMinutesInputEl();
+
+      changeInputValueTo(el, '!5');
+      expect($rootScope.time).toBe(null);
+      expect(el.parent().hasClass('has-error')).toBe(true);
+      expect(element.hasClass('ng-invalid-time')).toBe(true);
+
+      changeInputValueTo(el, 22);
+      expect(getTimeState()).toEqual(['02', '22', 'PM']);
+      expect(getModelState()).toEqual([14, 22]);
+      expect(el.parent().hasClass('has-error')).toBe(false);
+      expect(element.hasClass('ng-invalid-time')).toBe(false);
+    });
+
+    it('clears model when input minutes ends with an invalid & alerts the UI', function() {
+      var el = getMinutesInputEl();
+
+      changeInputValueTo(el, '5!');
       expect($rootScope.time).toBe(null);
       expect(el.parent().hasClass('has-error')).toBe(true);
       expect(element.hasClass('ng-invalid-time')).toBe(true);
@@ -889,4 +953,3 @@ describe('timepicker directive', function () {
   });
 
 });
-
